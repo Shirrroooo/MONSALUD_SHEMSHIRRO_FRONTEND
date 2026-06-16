@@ -12,9 +12,9 @@ import TaskCard from './TaskCard.vue'
 // Each task: { id, name, done, dueDate }
 // const tasks = ref([...])
 const tasks = ref([
-  { id: 1, name: 'Task 1', done: false, dueDate: '2023-08-10' },
-  { id: 2, name: 'Task 2', done: false, dueDate: '2023-08-15' },
-  { id: 3, name: 'Task 3', done: true, dueDate: '2023-08-20' }
+  { id: 1, name: 'Task 1', done: false, dueDate: '2023-08-10', priority: 'high' },
+  { id: 2, name: 'Task 2', done: false, dueDate: '2023-08-15', priority: 'medium' },
+  { id: 3, name: 'Task 3', done: true, dueDate: '2023-08-20', priority: 'low' }
 ])
 
 // TODO 2: Write handleComplete(id) — toggle the done state of the task with this id
@@ -28,6 +28,13 @@ function handleComplete(id) {
 // TODO 3: Write handleDelete(id) — remove the task with this id from the array
 function handleDelete(id) {
   tasks.value = tasks.value.filter(t => t.id !== id)
+}
+
+function handleUpdate(id, newName) {
+  const task = tasks.value.find(t => t.id === id)
+  if (task) {
+    task.name = newName
+  }
 }
 </script>
 
@@ -46,8 +53,10 @@ function handleDelete(id) {
       v-for="task in tasks"
       :key="task.id"
       :task="task"
+      :priority="task.priority"
       @complete="handleComplete"
       @delete="handleDelete"
+      @update="handleUpdate"
     >
     
       <template #meta>

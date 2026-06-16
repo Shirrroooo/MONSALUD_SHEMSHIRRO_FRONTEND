@@ -1,8 +1,8 @@
 <script setup lang="ts">
 // @ts-expect-error Vue SFC shim is provided by the project setup.
-import TaskCounter from './views/Day1/TaskCounter.vue'
+import TaskListView from './views/Day2/TaskListView.vue'
 </script>
 
 <template>
-  <TaskCounter />
+  <TaskListView />
 </template>

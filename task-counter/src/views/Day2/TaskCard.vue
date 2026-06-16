@@ -64,6 +64,7 @@ HINTS (read only if stuck)
 // TODO 1: import defineProps and defineEmits (they are compiler macros — no import needed
 //          but you DO need to call them)
 import { defineProps, defineEmits } from 'vue'
+import { ref } from 'vue'
 
 // TODO 2: Define the task prop with type Object, required: true
 // const props = defineProps({ ... })
@@ -71,12 +72,30 @@ const props = defineProps({
   task: {
     type: Object,
     required: true
+  },
+
+  // Extension (1): Add a priority prop (low/medium/high) with colour coding
+  priority: {
+    type: String,
+    required: true,
+    default: 'low'
   }
 })
 
+// Extension (2): Add an edit mode: clicking the task name turns it into an input
+const isEditing = ref(false)
+const editedName = ref(props.task.name)
+
 // TODO 3: Define emits for 'complete' and 'delete'
 // const emit = defineEmits([...])
-const emit = defineEmits(['complete', 'delete'])
+// Extension (3): Emit an "update" event when the edited name is saved
+const emit = defineEmits(['complete', 'delete', 'update'])
+
+// Extension (3): Emit an "update" event when the edited name is saved
+function saveEdit() {
+  emit('update', props.task.id, editedName.value)
+  isEditing.value = false
+}
 </script>
 
 <template>
@@ -87,7 +106,12 @@ const emit = defineEmits(['complete', 'delete'])
 
     <div class="task-header">
       <!-- TODO 5: Display the task name -->
-      <span class="name">{{ props.task.name }}</span>
+      <!-- Extension (2): Add an edit mode: clicking the task name turns it into an input -->
+      <span class="name" v-if="!isEditing" @click="isEditing = true">{{ props.task.name }}</span>
+      <input v-else v-model="editedName" @blur="saveEdit" @keyup.enter="saveEdit" />
+
+      <!-- Extension (1): Add a priority prop (low/medium/high) with colour coding -->
+      <span class="priority" :class="props.priority">{{ props.priority }}</span>
       <!-- TODO 6: Add the named slot for metadata -->
       <!-- <slot name="meta" /> -->
       <div class="meta">
@@ -113,7 +137,7 @@ const emit = defineEmits(['complete', 'delete'])
   background: white;
   border: 1px solid #e5e7eb;
   border-radius: 10px;
-  padding: 14px 16px;
+  padding: 22px 20px;
   margin-bottom: 12px;
   transition: all 0.2s;
 }
@@ -158,5 +182,29 @@ const emit = defineEmits(['complete', 'delete'])
   border-radius: 6px;
   cursor: pointer;
   font-size: 13px;
+}
+.priority {
+  display: inline-block;
+  width: 60px;
+  text-align: center;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-left: 8px;
+  margin-right: 8px;
+}
+.low {
+  background: #fef9c3;
+  color: #854d0e;
+}
+.medium {
+  background: #ffedd5;
+  color: #c2410c;
+}
+.high {
+  background: #fee2e2;
+  color: #b91c1c;
 }
 </style>

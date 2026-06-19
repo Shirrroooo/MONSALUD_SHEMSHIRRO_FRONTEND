@@ -95,4 +95,4 @@ const pendingCount = computed(() => tasks.value.filter(t => !t.done).length)
 
   // TODO 7: Return everything the component needs to access
   return { tasks, totalCount, doneCount, pendingCount, addTask, toggleTask, removeTask }
-})
+}, { persist: true })

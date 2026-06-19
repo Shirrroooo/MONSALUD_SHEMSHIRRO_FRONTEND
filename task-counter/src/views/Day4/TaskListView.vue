@@ -10,9 +10,12 @@ import { storeToRefs } from 'pinia'
 
 // TODO 1: Import your store
 import { useTaskStore } from '../../stores/Day4/taskStore.js'
+import { useUserStore } from '../../stores/Day4/userStore.js'
 
 // TODO 2: Get the store instance
 const taskStore = useTaskStore()
+
+const userStore = useUserStore()
 
 // TODO 3: Destructure REACTIVE STATE using storeToRefs()
 const { tasks, doneCount, pendingCount, totalCount } = storeToRefs(taskStore)
@@ -20,20 +23,40 @@ const { tasks, doneCount, pendingCount, totalCount } = storeToRefs(taskStore)
 // TODO 4: Destructure ACTIONS directly (no storeToRefs needed for functions)
 const { addTask, toggleTask, removeTask } = taskStore
 
+const { currentUser, isLoggedIn } = storeToRefs(userStore)
+
 // This local ref is fine — it's UI state, not task state
 const newTaskName = ref('')
+const loginName = ref('')
 
 function handleAdd() {
   // TODO 5: Call addTask() from the store, then clear the input
   addTask(newTaskName.value)
   newTaskName.value = ''
 }
+
+function handleLogin() {
+  userStore.login(loginName.value)
+  loginName.value = ''
+}
+
+function handleLogout() {
+  userStore.logout()
+}
 </script>
 
 <template>
   <div class="task-view">
     <h1>📝 Tasks</h1>
+    <div v-if="isLoggedIn" class="login-User">
+      Welcome, {{ currentUser }}!
+      <button @click="handleLogout" class="logout-btn">Logout</button>
+    </div>
 
+    <div v-else class ="input-row">
+      <input v-model="loginName" placeholder="Enter your name to login" @keyup.enter="handleLogin" />
+      <button @click="handleLogin">Login</button>
+    </div>
     <!-- TODO 6: Display totalCount, doneCount, pendingCount from the store -->
     <div class="stats">
       Total: {{ totalCount }} | Done: {{ doneCount }} | Pending: {{ pendingCount }} 
@@ -60,15 +83,93 @@ function handleAdd() {
 </template>
 
 <style scoped>
-.task-view { max-width: 480px; margin: 40px auto; padding: 24px; font-family: Arial, sans-serif; }
-h1 { color: #EFC7C2; }
-.stats { font-size: 13px; color: #555; padding: 8px 12px; background: #e9f7f0; border-radius: 6px; margin-bottom: 16px; }
-.input-row { display: flex; gap: 8px; margin-bottom: 16px; }
-.input-row input { flex: 1; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; }
-.input-row button { padding: 8px 16px; background: #42B883; color: white; border: none; border-radius: 6px; cursor: pointer; }
-.task-list { list-style: none; padding: 0; margin: 0; }
-.task-list li { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: white; border-radius: 6px; margin-bottom: 8px; border: 1px solid #eee; }
-.task-list li span { flex: 1; font-size: 14px; }
-.done { text-decoration: line-through; color: #9ca3af; }
-.task-list li .remove { padding: 4px 10px; background: #fee2e2; color: #dc2626; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; }
+.task-view { 
+  max-width: 480px; 
+  margin: 40px auto; 
+  padding: 24px; 
+  font-family: Arial, sans-serif; 
+}
+h1 { 
+  color: #EFC7C2; 
+}
+.stats { 
+  font-size: 13px; 
+  color: #555; 
+  padding: 8px 12px; 
+  background: #e9f7f0; 
+  border-radius: 6px; 
+  margin-bottom: 16px; 
+}
+.login-User {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+  color: #ebc90c;
+  gap: 10px;
+}
+.logout-btn {
+  padding: 6px 12px;
+  background: #fee2e2;
+  color: #dc2626;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+}
+.input-row { 
+  display: flex; 
+  gap: 8px; 
+  margin-bottom: 16px; 
+}
+.input-row input { 
+  flex: 1; 
+  padding: 8px 12px; 
+  border: 1px solid #ddd; 
+  border-radius: 6px; 
+  font-size: 14px; 
+}
+.input-row button { 
+  padding: 8px 16px; 
+  background: #42B883; 
+  color: white; 
+  border: none; 
+  border-radius: 6px; 
+  cursor: pointer; 
+  width: 80px;
+}
+.task-list { 
+  list-style: none; 
+  padding: 0; 
+  margin: 0; 
+}
+.task-list li { 
+  display: flex; 
+  align-items: center; 
+  gap: 10px; 
+  padding: 10px 12px; 
+  background: white; 
+  border-radius: 6px; 
+  margin-bottom: 8px; 
+  border: 1px solid #eee; 
+}
+.task-list li span { 
+  flex: 1; 
+  font-size: 14px; 
+}
+.done { 
+  text-decoration: line-through; 
+  color: #9ca3af; 
+}
+.task-list li .remove { 
+  padding: 4px 10px; 
+  background: #fee2e2; 
+  color: #dc2626; 
+  border: none; 
+  border-radius: 4px; 
+  cursor: pointer; 
+  font-size: 12px; 
+}
 </style>

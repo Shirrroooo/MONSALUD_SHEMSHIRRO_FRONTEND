@@ -3,12 +3,12 @@
     <ion-tabs>
       <ion-router-outlet></ion-router-outlet>
       <ion-tab-bar slot="bottom">
-        <ion-tab-button tab="tab1" href="/tabs/tab1">
+        <ion-tab-button tab="tasks" href="/tabs/tasks">
           <ion-icon aria-hidden="true" :icon="triangle" />
           <ion-label>Tab 1</ion-label>
         </ion-tab-button>
 
-        <ion-tab-button tab="tab2" href="/tabs/tab2">
+        <ion-tab-button tab="completed" href="/tabs/completed">
           <ion-icon aria-hidden="true" :icon="ellipse" />
           <ion-label>Tab 2</ion-label>
         </ion-tab-button>

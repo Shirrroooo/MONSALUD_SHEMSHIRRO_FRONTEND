@@ -64,18 +64,19 @@
         </ion-card>
         <!-- Task List -->
         <ion-list v-if ="totalCount > 0">
-          <ion-item v-for="task in tasks" :key="task.id">
+          <ion-item v-for="task in tasks" :key="task.id" @click="goToTaskDetail(task.id)">
             <ion-checkbox
             slot="start"
             :checked="task.done"
             @ionChange="toggleTask(task.id)"
+            @click.stop
             />
             <ion-label :class="{ 'task-done': task.done }">{{ task.name }}</ion-label>
             <ion-button
               slot="end"
               fill="clear"
               color="danger"
-              @click="removeTask(task.id)"
+             @click.stop="removeTask(task.id)"
             >
               <ion-icon :icon="trashOutline" />
             </ion-button>
@@ -90,6 +91,7 @@
 </template>
 
 <script setup>
+import { useRouter } from 'vue-router';
 import { useTaskStore } from '@/stores/taskStore';
 import { useUserStore } from '@/stores/userStore';
 import { ref } from 'vue';
@@ -108,6 +110,10 @@ const { addTask, toggleTask, removeTask } = taskStore;
 const newTaskName = ref('');
 const loginName = ref('');
 const { isLoggedIn, currentUser } = storeToRefs(userStore);
+const router = useRouter();
+const goToTaskDetail = (taskId) => {
+  router.push(`/tabs/tasks/${taskId}`);
+};
 
 function handleAdd(){
   addTask(newTaskName.value);

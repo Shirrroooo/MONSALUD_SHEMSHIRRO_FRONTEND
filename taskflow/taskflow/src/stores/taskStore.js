@@ -90,7 +90,7 @@ const pendingCount = computed(() => tasks.value.filter(t => !t.done).length)
   // TODO 6: Define removeTask(id) action
   function removeTask(id) {
     tasks.value = tasks.value.filter(t => t.id !== id)
-    nextId.value--
+
   }
 
   // TODO 7: Return everything the component needs to access

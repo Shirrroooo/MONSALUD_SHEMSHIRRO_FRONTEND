@@ -36,6 +36,14 @@
                                 </ion-label>
                             </ion-item>
                         </ion-list>
+                        <div v-if="task.photo" class="photo-container">
+                            <h3>Task Photo</h3>
+                            <ion-img :src="task.photo" alt="Task Photo" />
+                        </div>
+                        <ion-button expand="block" @click="takePhoto" class="ion-margin-top">
+                            <ion-icon slot="start" :icon="cameraOutline" />
+                            Add Photo
+                        </ion-button>
                     </ion-card-content>
                 </ion-card>
                 <div v-else class="ion-text-center empty-state">
@@ -50,10 +58,12 @@
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { useTaskStore } from '@/stores/taskStore';
+import { trashOutline, cameraOutline } from 'ionicons/icons';
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import {
     IonPage, IonHeader, IonToolbar, IonTitle, IonContent, 
     IonButtons, IonBackButton, IonCard, IonCardHeader, IonCardTitle, 
-    IonCardContent, IonChip, IonLabel
+    IonCardContent, IonLabel, IonList, IonItem, IonButton, IonIcon
 } from '@ionic/vue';
 
 const route = useRoute();
@@ -61,7 +71,32 @@ const taskStore = useTaskStore();
 const task = computed(() =>
     taskStore.tasks.find(t => t.id === Number(route.params.id))
 );
-</script>
-<style>
 
+const takePhoto = async () => {
+  try {
+    const photo = await Camera.getPhoto({
+      quality: 90,
+      resultType: CameraResultType.Uri,
+      source: CameraSource.Photos
+    });
+    console.log('Photo captured:', photo.webPath);
+    if (photo.webPath && task.value) {
+      taskStore.addPhotoToTask(task.value.id, photo.webPath);
+      console.log('Photo added to task:', task.value.id, photo.webPath);
+    }
+  } catch (error) {
+    console.log('Photo cancelled or error:', error);
+  }
+}
+</script>
+<style scoped>
+.empty-state {
+    padding: 32px 16px;
+    color: #666;
+}
+ion-img {
+    max-width: 100%;
+    border-radius: 8px;
+    margin-top: 8px;
+}
 </style>

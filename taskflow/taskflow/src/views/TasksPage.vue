@@ -71,6 +71,9 @@
             @ionChange="toggleTask(task.id)"
             @click.stop
             />
+            <ion-thumbnail slot="start" v-if="task.photo">
+              <ion-img :src="task.photo" alt="Task thumbnail"></ion-img>
+            </ion-thumbnail>
             <ion-label :class="{ 'task-done': task.done }">{{ task.name }}</ion-label>
             <ion-button
               slot="end"
@@ -98,8 +101,9 @@ import { ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import { 
   IonPage, IonHeader, IonToolbar, IonTitle, IonContent,
-  IonCard, IonCardContent, IonItem, IonInput,
-  IonChip, IonLabel, IonList, IonCheckbox, IonButton, IonIcon
+  IonCard, IonCardContent, IonItem, IonInput, IonChip, 
+  IonLabel, IonList, IonCheckbox, IonButton, IonIcon,
+  IonThumbnail, IonImg
 } from '@ionic/vue';
 import { trashOutline } from 'ionicons/icons'
 // import ExploreContainer from '@/components/ExploreContainer.vue';

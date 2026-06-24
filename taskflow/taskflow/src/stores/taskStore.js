@@ -93,6 +93,11 @@ const pendingCount = computed(() => tasks.value.filter(t => !t.done).length)
 
   }
 
+  function addPhotoToTask(id, photoPath) {
+    const task = tasks.value.find(t => t.id === id)
+    if (task) task.photo = photoPath
+  }
+
   // TODO 7: Return everything the component needs to access
-  return { tasks, totalCount, doneCount, pendingCount, addTask, toggleTask, removeTask }
+  return { tasks, totalCount, doneCount, pendingCount, addTask, toggleTask, removeTask, addPhotoToTask }
 }, { persist: true })

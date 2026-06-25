@@ -76,13 +76,11 @@ const takePhoto = async () => {
   try {
     const photo = await Camera.getPhoto({
       quality: 90,
-      resultType: CameraResultType.Uri,
+      resultType: CameraResultType.DataUrl,
       source: CameraSource.Photos
     });
-    console.log('Photo captured:', photo.webPath);
-    if (photo.webPath && task.value) {
-      taskStore.addPhotoToTask(task.value.id, photo.webPath);
-      console.log('Photo added to task:', task.value.id, photo.webPath);
+    if (photo.dataUrl && task.value) {
+      taskStore.addPhotoToTask(task.value.id, photo.dataUrl);
     }
   } catch (error) {
     console.log('Photo cancelled or error:', error);

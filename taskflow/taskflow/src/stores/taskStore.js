@@ -59,6 +59,7 @@
 
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
+import { Preferences } from '@capacitor/preferences'
 
 // TODO 1: Export a useTaskStore function using defineStore
 // The store ID is 'tasks' — this appears in Vue DevTools
@@ -72,6 +73,7 @@ const nextId = ref(1)
 const totalCount   = computed(() => tasks.value.length)
 const doneCount    = computed(() => tasks.value.filter(t => t.done).length)
 const pendingCount = computed(() => tasks.value.filter(t => !t.done).length)
+const STORAGE_KEY = 'taskflow_tasks'
 
   // TODO 4: Define addTask(name) action
   // - Guard against empty names
@@ -79,25 +81,39 @@ const pendingCount = computed(() => tasks.value.filter(t => !t.done).length)
   function addTask(name) {
     if (!name.trim()) return
     tasks.value.push({ id: nextId.value++, name, done: false })
+    saveTasks()
   }
 
   // TODO 5: Define toggleTask(id) action
   function toggleTask(id) {
     const task = tasks.value.find(t => t.id === id)
     if (task) task.done = !task.done
+    saveTasks()
   }
 
   // TODO 6: Define removeTask(id) action
   function removeTask(id) {
     tasks.value = tasks.value.filter(t => t.id !== id)
-
+    saveTasks()
   }
 
   function addPhotoToTask(id, photoPath) {
     const task = tasks.value.find(t => t.id === id)
     if (task) task.photo = photoPath
+    saveTasks()
+  }
+
+  async function saveTasks() {
+    await Preferences.set({ 
+      key: STORAGE_KEY, 
+      value: JSON.stringify(tasks.value) })
+  }
+  
+  async function loadTasks() {
+    const { value } = await Preferences.get({ key: STORAGE_KEY })
+    if (value) tasks.value = JSON.parse(value)
   }
 
   // TODO 7: Return everything the component needs to access
-  return { tasks, totalCount, doneCount, pendingCount, addTask, toggleTask, removeTask, addPhotoToTask }
+  return { tasks, totalCount, doneCount, pendingCount, addTask, toggleTask, removeTask, addPhotoToTask, saveTasks, loadTasks }
 }, { persist: true })
